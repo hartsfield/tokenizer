@@ -6,10 +6,12 @@ import (
 	"strings"
 )
 
+type ChunkMap map[string]int
+type ChunkChan chan string
 type chunker struct {
 	Chunker   Chunker
-	ChunkMap  map[string]int
-	ChunkChan chan string
+	ChunkMap  ChunkMap
+	ChunkChan ChunkChan
 }
 type Chunker interface {
 	ReplacrAllSubStrings(string, ...string) string
@@ -31,22 +33,16 @@ func NewChunker() *chunker {
 	return c
 }
 
-func (c *chunker) Shred(unwashed string, chunkSize int) (washed []string) {
+func (c *chunker) Shred(unwashed string, chunkSize int) (washed map[string]int) {
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
 		phrase = append(phrase, chunk)
 		if k%chunkSize == 0 || k == len(words)-1 {
-			washed = append(washed, strings.Join(phrase, " "))
+			washed[strings.Join(phrase, " ")] = 0
 			phrase = []string{}
 		}
 	}
-	return
-}
-
-func (c *chunker) ShredSpecial(unwashed string, split string, minWordCount int) (washed []string) {
-	words := strings.Fields(unwashed)
-	washed = strings.SplitAfter(strings.Join(words, " "), split)
 	return
 }
 
