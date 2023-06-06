@@ -14,19 +14,24 @@ var (
 	mergechan chan string    = make(chan string)
 )
 
+type chunker struct {
+	Chunker
+}
 type Chunker interface {
-	*chunker
-	ReplaceAllSubStrings(string, ...string) string
+	ReplacrAllSubStrings(string, ...string) string
+	SplitAndTrim(string, int) string
 	GroupChunk(string, int) []string
 	SortChunks()
 	Prepare(string, uint) []string
-}
-type chunker struct {
 }
 
 type ranked struct {
 	Token string
 	Rank  int
+}
+
+func NewChunker() *chunker {
+	return &chunker{}
 }
 
 func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
