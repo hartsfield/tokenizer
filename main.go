@@ -5,19 +5,23 @@ import (
 	"fmt"
 	"sort"
 	"strings"
-	"sync"
 )
 
 var (
-	//go:embed all.txt
-	initial string
-
+	initial   string
+	final     []*ranked
 	chunkmap  map[string]int = make(map[string]int)
 	mergechan chan string    = make(chan string)
-	final     []*ranked
 )
 
-type Chunker struct {
+type Chunker interface {
+	*chunker
+	ReplaceAllSubStrings(string, ...string) string
+	GroupChunk(string, int) []string
+	SortChunks()
+	Prepare(string, uint) []string
+}
+type chunker struct {
 }
 
 type ranked struct {
@@ -25,11 +29,7 @@ type ranked struct {
 	Rank  int
 }
 
-func (c *Chunker) PrepareToken(unwashed string) (washed []string) {
-	unwashed = strings.ReplaceAll(unwashed, "’s", "")
-	unwashed = strings.ReplaceAll(unwashed, "'s", "")
-	unwashed = strings.ReplaceAll(unwashed, "--", " ")
-
+func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
@@ -45,26 +45,44 @@ func (c *Chunker) PrepareToken(unwashed string) (washed []string) {
 	return
 }
 
-func main() {
-	tokens := prepareToken(initial)
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer func() { wg.Done(); close(mergechan) }()
-		for _, token := range tokens {
-			groupChunk(token, len(strings.Split(token, " ")))
+func (c *chunker) SplitAndTrim(unwashed string, minLength int) (washed string) {
+	words := strings.Fields(unwashed)
+	var rinsed []string
+	for _, chunk := range words {
+		chunk = strings.Trim(chunk, `,./;'[:]\\-='1234567890()_+{}|:?!@#$%^&*"“”,’‘`)
+		if len(chunk) > minLength {
+			rinsed = append(rinsed, chunk)
 		}
-	}()
-
-	for chunk := range mergechan {
-		chunkmap[chunk] = chunkmap[chunk] + 1
 	}
-	sortChunks()
-	printChunks()
+	return strings.Join(rinsed, " ")
 }
 
-func (c *Chunker) GroupChunk(inToken string, grouping int) {
+// "’s", "'s", "--" // last string is the sting to replace with
+func (c *chunker) ReplaceAllSubStrings(inChunk string, subStrings ...string) string {
+	replacer := strings.NewReplacer(subStrings...)
+	return replacer.Replace(inChunk)
+}
+
+// func main() {
+// 	tokens := prepareToken(initial)
+
+// 	var wg sync.WaitGroup
+// 	wg.Add(1)
+// 	go func() {
+// 		defer func() { wg.Done(); close(mergechan) }()
+// 		for _, token := range tokens {
+// 			groupChunk(token, len(strings.Split(token, " ")))
+// 		}
+// 	}()
+
+// 	for chunk := range mergechan {
+// 		chunkmap[chunk] = chunkmap[chunk] + 1
+// 	}
+// 	sortChunks()
+// 	printChunks()
+// }
+
+func (c *chunker) GroupChunk(inToken string, grouping int) {
 	if grouping > -1 {
 		words := strings.Fields(inToken)
 		for index := range words {
@@ -75,7 +93,7 @@ func (c *Chunker) GroupChunk(inToken string, grouping int) {
 		c.GroupChunk(strings.Join(words, " "), grouping-1)
 	}
 }
-func (c *Chunker) SortChunks() {
+func (c *chunker) SortChunks() {
 	for k, v := range chunkmap {
 		final = append(final, &ranked{k, v})
 	}
