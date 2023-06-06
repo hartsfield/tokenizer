@@ -38,7 +38,6 @@ func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
-		chunk = strings.Trim(chunk, `,./;'[:]\\-='1234567890()_+{}|:?!@#$%^&*"“”,’‘`)
 		if len(chunk) > 0 {
 			phrase = append(phrase, chunk)
 			if k%10 == 9 {
@@ -50,11 +49,12 @@ func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
 	return
 }
 
-func (c *chunker) SplitAndTrim(unwashed string, minLength int) (washed string) {
+// `,./;'[:]\\-='1234567890()_+{}|:?!@#$%^&*"“”,’‘`)
+func (c *chunker) SplitAndTrim(unwashed string, minLength int, trimChars string) (washed string) {
 	words := strings.Fields(unwashed)
 	var rinsed []string
 	for _, chunk := range words {
-		chunk = strings.Trim(chunk, `,./;'[:]\\-='1234567890()_+{}|:?!@#$%^&*"“”,’‘`)
+		chunk = strings.Trim(chunk, trimChars)
 		if len(chunk) > minLength {
 			rinsed = append(rinsed, chunk)
 		}
