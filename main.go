@@ -70,13 +70,13 @@ func (c *chunker) ReplaceAllSubStrings(inChunk string, subStrings ...string) str
 func (c *chunker) GroupChunk(inToken string) {
 	words := strings.Fields(inToken)
 	grouping := len(words)
-	if grouping > -1 {
+	if grouping > 0 {
 		for index := range words {
 			if grouping > index {
 				c.ChunkChan <- strings.Join(words[index:grouping], " ")
 			}
 		}
-		c.GroupChunk(strings.Join(words[:len(words)-1], " "))
+		c.GroupChunk(strings.Join(words[:grouping-1], " "))
 	}
 }
 func (c *chunker) SortChunks() (final []*Ranked) {
