@@ -6,14 +6,8 @@ import (
 	"strings"
 )
 
-var (
-	initial   string
-	chunkmap  map[string]int = make(map[string]int)
-	mergechan chan string    = make(chan string)
-)
-
 type chunker struct {
-	Chunker
+	Chunker   Chunker
 	ChunkMap  map[string]int
 	ChunkChan chan string
 }
@@ -33,6 +27,7 @@ type Ranked struct {
 func NewChunker() *chunker {
 	var c *chunker = &chunker{}
 	c.ChunkChan = make(chan string)
+	c.ChunkMap = make(map[string]int)
 	return c
 }
 
@@ -92,14 +87,14 @@ func (c *chunker) GroupChunk(inToken string, grouping int) {
 		words := strings.Fields(inToken)
 		for index := range words {
 			if grouping > index {
-				mergechan <- strings.Join(words[index:grouping], " ")
+				ChunkChan <- strings.Join(words[index:grouping], " ")
 			}
 		}
 		c.GroupChunk(strings.Join(words, " "), grouping-1)
 	}
 }
 func (c *chunker) SortChunks() (final []*Ranked) {
-	for k, v := range chunkmap {
+	for k, v := range ChunkMap {
 		final = append(final, &Ranked{k, v})
 	}
 
