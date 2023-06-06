@@ -94,7 +94,7 @@ func (c *chunker) GroupChunk(inToken string, grouping int) {
 	}
 }
 func (c *chunker) SortChunks() (final []*Ranked) {
-	for k, v := range ChunkMap {
+	for k, v := range c.ChunkMap {
 		final = append(final, &Ranked{k, v})
 	}
 
