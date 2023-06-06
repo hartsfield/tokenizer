@@ -16,6 +16,8 @@ var (
 
 type chunker struct {
 	Chunker
+	ChunkMap  map[string]int
+	ChunkChan chan string
 }
 type Chunker interface {
 	ReplacrAllSubStrings(string, ...string) string
