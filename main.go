@@ -91,11 +91,10 @@ func (c *chunker) SortChunks() (final []*Ranked) {
 	return
 }
 
-func (c *chunker) Scan(ranked []*Ranked, search string, minLength int) (sorted []*Ranked, unsorted []string) {
-	for _, token := range ranked {
-		if strings.Contains(token.Token, search) {
-			sorted = append(sorted, token)
-			unsorted = append(unsorted, token.Token)
+func (c *chunker) Scan(ranked map[string]int, search string, minLength int) (found map[string]int) {
+	for token, score := range ranked {
+		if strings.Contains(token, search) {
+			found[token] = score
 		}
 	}
 	return
