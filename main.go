@@ -31,7 +31,9 @@ type Ranked struct {
 }
 
 func NewChunker() *chunker {
-	return &chunker{}
+	var c *chunker = &chunker{}
+	c.ChunkChan = make(chan string)
+	return c
 }
 
 func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
