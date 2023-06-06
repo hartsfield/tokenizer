@@ -45,7 +45,8 @@ func (c *chunker) Shred(unwashed string, chunkSize int) (washed []string) {
 }
 
 func (c *chunker) ShredSpecial(unwashed string, split string, minWordCount int) (washed []string) {
-	washed = strings.SplitAfter(unwashed, split)
+	words := strings.Fields(unwashed)
+	washed = strings.SplitAfter(strings.Join(words, " "), split)
 	return
 }
 
@@ -78,6 +79,7 @@ func (c *chunker) GroupChunk(inToken string) {
 		c.GroupChunk(strings.Join(words[:grouping-1], " "))
 	}
 }
+
 func (c *chunker) SortChunks() (final []*Ranked) {
 	for k, v := range c.ChunkMap {
 		final = append(final, &Ranked{k, v})
@@ -86,5 +88,15 @@ func (c *chunker) SortChunks() (final []*Ranked) {
 	sort.Slice(final, func(i, j int) bool {
 		return final[i].Rank < final[j].Rank
 	})
+	return
+}
+
+func (c *chunker) Scan(ranked []*Ranked, search string, minLength int) (sorted []*Ranked, unsorted []string) {
+	for _, token := range ranked {
+		if strings.Contains(token.Token, search) {
+			sorted = append(sorted, token)
+			unsorted = append(unsorted, token.Token)
+		}
+	}
 	return
 }
