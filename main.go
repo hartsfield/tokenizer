@@ -67,15 +67,16 @@ func (c *chunker) ReplaceAllSubStrings(inChunk string, subStrings ...string) str
 	return replacer.Replace(inChunk)
 }
 
-func (c *chunker) GroupChunk(inToken string, grouping int) {
+func (c *chunker) GroupChunk(inToken string) {
+	words := strings.Fields(inToken)
+	grouping := len(words)
 	if grouping > -1 {
-		words := strings.Fields(inToken)
 		for index := range words {
 			if grouping > index {
 				c.ChunkChan <- strings.Join(words[index:grouping], " ")
 			}
 		}
-		c.GroupChunk(strings.Join(words, " "), grouping-1)
+		c.GroupChunk(strings.Join(words[:len(words)-1], " "))
 	}
 }
 func (c *chunker) SortChunks() (final []*Ranked) {
