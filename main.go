@@ -76,8 +76,8 @@ func (c *chunker) GroupChunk(inToken string) {
 	}
 }
 
-func (c *chunker) SortChunks() (final []*Ranked) {
-	for k, v := range c.ChunkMap {
+func (c *chunker) SortChunks(chunks ChunkMap) (final []*Ranked) {
+	for k, v := range chunks {
 		final = append(final, &Ranked{k, v})
 	}
 
