@@ -46,7 +46,7 @@ func (c *chunker) Shred(unwashed string, chunkSize int) (washed []string) {
 
 func (c *chunker) ShredSpecial(unwashed string, split string, minWordCount int) (washed []string) {
 	words := strings.Fields(unwashed)
-	washed = strings.Split(strings.Join(words, " "), split)
+	washed = strings.SplitAfter(strings.Join(words, " "), split)
 	return
 }
 
