@@ -31,7 +31,7 @@ func NewChunker() *chunker {
 	return c
 }
 
-func (c *chunker) Prepare(unwashed string, chunkSize int) (washed []string) {
+func (c *chunker) Shred(unwashed string, chunkSize int) (washed []string) {
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
@@ -44,7 +44,12 @@ func (c *chunker) Prepare(unwashed string, chunkSize int) (washed []string) {
 	return
 }
 
-// `,./;'[:]\\-='1234567890()_+{}|:?!@#$%^&*"“”,’‘`)
+func (c *chunker) ShredSpecial(unwashed string, split string, minWordCount int) (washed []string) {
+	words := strings.Fields(unwashed)
+	washed := strings.Split(strings.Join(words), split)
+	return
+}
+
 func (c *chunker) SplitAndTrim(unwashed string, minLength int, trimChars string) (washed string) {
 	words := strings.Fields(unwashed)
 	var rinsed []string
@@ -57,30 +62,10 @@ func (c *chunker) SplitAndTrim(unwashed string, minLength int, trimChars string)
 	return strings.Join(rinsed, " ")
 }
 
-// "’s", "'s", "--" // last string is the sting to replace with
 func (c *chunker) ReplaceAllSubStrings(inChunk string, subStrings ...string) string {
 	replacer := strings.NewReplacer(subStrings...)
 	return replacer.Replace(inChunk)
 }
-
-// func main() {
-// 	tokens := prepareToken(initial)
-
-// 	var wg sync.WaitGroup
-// 	wg.Add(1)
-// 	go func() {
-// 		defer func() { wg.Done(); close(mergechan) }()
-// 		for _, token := range tokens {
-// 			groupChunk(token, len(strings.Split(token, " ")))
-// 		}
-// 	}()
-
-// 	for chunk := range mergechan {
-// 		chunkmap[chunk] = chunkmap[chunk] + 1
-// 	}
-// 	sortChunks()
-// 	printChunks()
-// }
 
 func (c *chunker) GroupChunk(inToken string, grouping int) {
 	if grouping > -1 {
@@ -103,18 +88,3 @@ func (c *chunker) SortChunks() (final []*Ranked) {
 	})
 	return
 }
-
-// func printChunks() {
-// 	// var counter int
-// 	for _, token := range final {
-// 		if token.Rank > 1 {
-// 			if (strings.Contains(token.Token, "-")) && !(strings.Contains(token.Token, " ")) && len(token.Token) > 9 {
-// 				// counter = counter + 1
-// 				fmt.Println(token.Rank, token.Token)
-// 			}
-// 		}
-// 	}
-// 	fmt.Println()
-// 	// fmt.Println(counter)
-// 	fmt.Println("Total chunks:", len(chunkmap))
-// }
