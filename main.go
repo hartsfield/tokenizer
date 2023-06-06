@@ -34,6 +34,7 @@ func NewChunker() *chunker {
 }
 
 func (c *chunker) Shred(unwashed string, chunkSize int) (washed map[string]int) {
+	washed = make(map[string]int)
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
