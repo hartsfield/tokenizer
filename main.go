@@ -87,7 +87,7 @@ func (c *chunker) GroupChunk(inToken string, grouping int) {
 		words := strings.Fields(inToken)
 		for index := range words {
 			if grouping > index {
-				ChunkChan <- strings.Join(words[index:grouping], " ")
+				c.ChunkChan <- strings.Join(words[index:grouping], " ")
 			}
 		}
 		c.GroupChunk(strings.Join(words, " "), grouping-1)
