@@ -36,16 +36,14 @@ func NewChunker() *chunker {
 	return c
 }
 
-func (c *chunker) Prepare(unwashed string, chunkSize uint) (washed []string) {
+func (c *chunker) Prepare(unwashed string, chunkSize int) (washed []string) {
 	words := strings.Fields(unwashed)
 	var phrase []string
 	for k, chunk := range words {
-		if len(chunk) > 0 {
-			phrase = append(phrase, chunk)
-			if k%10 == 9 {
-				washed = append(washed, strings.Join(phrase, " "))
-				phrase = []string{}
-			}
+		phrase = append(phrase, chunk)
+		if k%chunkSize == 0 {
+			washed = append(washed, strings.Join(phrase, " "))
+			phrase = []string{}
 		}
 	}
 	return
