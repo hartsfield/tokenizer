@@ -2,14 +2,12 @@ package tokenizer
 
 import (
 	_ "embed"
-	"fmt"
 	"sort"
 	"strings"
 )
 
 var (
 	initial   string
-	final     []*ranked
 	chunkmap  map[string]int = make(map[string]int)
 	mergechan chan string    = make(chan string)
 )
@@ -27,7 +25,7 @@ type Chunker interface {
 	Prepare(string, uint) []string
 }
 
-type ranked struct {
+type Ranked struct {
 	Token string
 	Rank  int
 }
@@ -100,9 +98,9 @@ func (c *chunker) GroupChunk(inToken string, grouping int) {
 		c.GroupChunk(strings.Join(words, " "), grouping-1)
 	}
 }
-func (c *chunker) SortChunks() (final []*ranked) {
+func (c *chunker) SortChunks() (final []*Ranked) {
 	for k, v := range chunkmap {
-		final = append(final, &ranked{k, v})
+		final = append(final, &Ranked{k, v})
 	}
 
 	sort.Slice(final, func(i, j int) bool {
@@ -110,17 +108,18 @@ func (c *chunker) SortChunks() (final []*ranked) {
 	})
 	return
 }
-func printChunks() {
-	// var counter int
-	for _, token := range final {
-		if token.Rank > 1 {
-			if (strings.Contains(token.Token, "-")) && !(strings.Contains(token.Token, " ")) && len(token.Token) > 9 {
-				// counter = counter + 1
-				fmt.Println(token.Rank, token.Token)
-			}
-		}
-	}
-	fmt.Println()
-	// fmt.Println(counter)
-	fmt.Println("Total chunks:", len(chunkmap))
-}
+
+// func printChunks() {
+// 	// var counter int
+// 	for _, token := range final {
+// 		if token.Rank > 1 {
+// 			if (strings.Contains(token.Token, "-")) && !(strings.Contains(token.Token, " ")) && len(token.Token) > 9 {
+// 				// counter = counter + 1
+// 				fmt.Println(token.Rank, token.Token)
+// 			}
+// 		}
+// 	}
+// 	fmt.Println()
+// 	// fmt.Println(counter)
+// 	fmt.Println("Total chunks:", len(chunkmap))
+// }
