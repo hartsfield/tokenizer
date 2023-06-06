@@ -100,7 +100,7 @@ func (c *chunker) GroupChunk(inToken string, grouping int) {
 		c.GroupChunk(strings.Join(words, " "), grouping-1)
 	}
 }
-func (c *chunker) SortChunks() {
+func (c *chunker) SortChunks() (final []*ranked) {
 	for k, v := range chunkmap {
 		final = append(final, &ranked{k, v})
 	}
@@ -108,6 +108,7 @@ func (c *chunker) SortChunks() {
 	sort.Slice(final, func(i, j int) bool {
 		return final[i].Rank < final[j].Rank
 	})
+	return
 }
 func printChunks() {
 	// var counter int
