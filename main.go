@@ -36,7 +36,7 @@ func (c *chunker) Prepare(unwashed string, chunkSize int) (washed []string) {
 	var phrase []string
 	for k, chunk := range words {
 		phrase = append(phrase, chunk)
-		if k%chunkSize == 0 {
+		if k%chunkSize == 0 || k >= len(words)-chunkSize {
 			washed = append(washed, strings.Join(phrase, " "))
 			phrase = []string{}
 		}
