@@ -91,7 +91,7 @@ func (c *chunker) SortChunks(chunks ChunkMap) (final []*Ranked) {
 func (c *chunker) Scan(ranked map[string]int, search string, minLength int) (found map[string]int) {
 	found = make(map[string]int)
 	for token, score := range ranked {
-		if strings.Contains(token, search) {
+		if strings.Contains(strings.ToLower(token), strings.ToLower(search)) {
 			found[token] = score
 		}
 	}
