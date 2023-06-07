@@ -77,14 +77,18 @@ func (c *chunker) GroupChunk(inToken string) {
 	}
 }
 
-func (c *chunker) SortChunks(chunks ChunkMap) (final []*Ranked) {
+func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap) {
+	var ranked []*Ranked
 	for k, v := range chunks {
-		final = append(final, &Ranked{k, v})
+		ranked = append(ranked, &Ranked{k, v})
 	}
 
-	sort.Slice(final, func(i, j int) bool {
-		return final[i].Rank < final[j].Rank
+	sort.Slice(ranked, func(i, j int) bool {
+		return ranked[i].Rank < ranked[j].Rank
 	})
+	for _, token := range ranked {
+		rankedMap[token.Token] = token.Rank
+	}
 	return
 }
 
@@ -97,3 +101,29 @@ func (c *chunker) Scan(ranked map[string]int, search string, minLength int) (fou
 	}
 	return
 }
+
+// func (c *chunker) FindUnique(phrases map[string]int) (found map[string]int) {
+// 	found = make(map[string]int)
+// 	picked := make(map[string]int)
+// 	picked2 := make(map[string]int)
+// 	var pcount int = 0
+// 	var p2count int = 0
+// 	for token, _ := range phrases {
+// 		spl := strings.Fields(token)
+// 		for _, tok := range spl {
+// 			picked[tok] = picked[tok] + 1
+// 			pcount = pcount + picked[tok]
+// 		}
+// 		for t, _ := range phrases {
+// 			sl := strings.Fields(t)
+// 			for _, word := range sl {
+// 				picked2[word] = picked[word] + picked2[word]
+// 				p2count = p2count + picked2[word]
+// 			}
+// 		}
+// 		if p2count/2 > pcount {
+// 			continue
+// 		}
+// 	}
+
+// }
