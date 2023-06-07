@@ -86,9 +86,9 @@ func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap, ranked []*Ran
 	sort.Slice(ranked, func(i, j int) bool {
 		return ranked[i].Rank < ranked[j].Rank
 	})
-	for _, token := range ranked {
-		rankedMap[token.Token] = token.Rank
-	}
+	// for _, token := range ranked {
+	// 	rankedMap[token.Token] = token.Rank
+	// }
 	return
 }
 
