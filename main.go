@@ -77,7 +77,7 @@ func (c *chunker) GroupChunk(inToken string) {
 	}
 }
 
-func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap) {
+func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap, rankedSlice []*Ranked) {
 	var ranked []*Ranked
 	rankedMap = make(map[string]int)
 	for k, v := range chunks {
@@ -93,7 +93,7 @@ func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap) {
 	return
 }
 
-func (c *chunker) Scan(ranked map[string]int, search string, minLength int) (found map[string]int) {
+func (c *chunker) Scan(ranked map[string]int, search string) (found map[string]int) {
 	found = make(map[string]int)
 	for token, score := range ranked {
 		if strings.Contains(strings.ToLower(token), strings.ToLower(search)) {
