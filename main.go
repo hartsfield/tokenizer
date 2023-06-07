@@ -77,7 +77,7 @@ func (c *chunker) GroupChunk(inToken string) {
 	}
 }
 
-func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap, rankedSlice []*Ranked) {
+func (c *chunker) SortChunks(chunks ChunkMap) (rankedMap ChunkMap, ranked []*Ranked) {
 	var ranked []*Ranked
 	rankedMap = make(map[string]int)
 	for k, v := range chunks {
